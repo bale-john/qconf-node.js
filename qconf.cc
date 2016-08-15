@@ -1,6 +1,5 @@
 #include <node.h>
-#include "node_modules/nan/nan.h"
-#include "qconf.h"
+#include <qconf.h>
 #include <v8.h>
 
 using namespace v8;  
