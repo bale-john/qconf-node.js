@@ -12,3 +12,6 @@ console.log(children_confs);
 
 var host = require('./build/Release/qconf.node').get_host('/qconf/demo/test/hosts/host2');
 console.log(host);
+
+var hosts = require('./build/Release/qconf.node').get_allhost('/qconf/demo/test/hosts/host2');
+console.log(hosts);

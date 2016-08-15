@@ -153,6 +153,45 @@ Handle<Value> QConf_get_host(const Arguments& args) {
     }
     return scope.Close(String::New(value));
 }
+
+//get_allhost
+Handle<Value> QConf_get_allhost(const Arguments& args) {
+    HandleScope scope;
+
+    const char *path = NULL;
+    const char *idc = NULL;
+    string_vector_t nodes;
+    int ret;
+
+    if (args.Length() < 1) {
+        ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
+        return scope.Close(Undefined());
+    }
+
+    String::Utf8Value v8Path(args[0]);
+    path = *v8Path;
+
+    if (args.Length() >= 2) {
+        String::Utf8Value v8Idc(args[1]);
+        idc = *v8Idc;
+    }
+    
+    init_string_vector(&nodes);
+    ret = qconf_get_allhost(path, &nodes, idc);
+
+    if (ret != QCONF_OK) {
+        ThrowException(Exception::TypeError(String::New("Get all host failed")));
+        return scope.Close(Undefined());
+    }
+
+    Handle<Array> v8Arr = Array::New(nodes.count);
+    for (int i = 0; i < nodes.count; ++i) {
+        v8Arr->Set(i, String::New(nodes.data[i]));
+    }
+    destroy_string_vector(&nodes);
+    return scope.Close(v8Arr);
+}
+
 void init(Handle<Object> target) {
     target->Set(String::NewSymbol("version"),
             FunctionTemplate::New(QConfVersion)->GetFunction());
@@ -168,5 +207,8 @@ void init(Handle<Object> target) {
 
     target->Set(String::NewSymbol("get_host"),
             FunctionTemplate::New(QConf_get_host)->GetFunction());
+
+    target->Set(String::NewSymbol("get_allhost"),
+            FunctionTemplate::New(QConf_get_allhost)->GetFunction());
 }
 NODE_MODULE(qconf, init)
