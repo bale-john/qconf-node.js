@@ -1,2 +1,5 @@
 var version = require('./build/Release/qconf.node').version();
-console.log(version); //这里打印world字符串
+console.log(version);
+
+var conf = require('./build/Release/qconf.node').get_conf('/qconf/demo');
+console.log(conf);
