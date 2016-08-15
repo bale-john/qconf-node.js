@@ -6,13 +6,13 @@
 using namespace v8;  
 
 //gte version
-Handle<Value> QConfVersion(const Arguments& args) {
+Handle<Value> QConf_version(const Arguments& args) {
     HandleScope scope;
     return scope.Close(String::New(QCONF_DRIVER_CC_VERSION));
 }
 
 //get_conf
-Handle<Value> QConfGetConf(const Arguments& args) {
+Handle<Value> QConf_get_conf(const Arguments& args) {
     HandleScope scope;
 
     const char *path = NULL;
@@ -113,11 +113,6 @@ Handle<Value> QConf_get_batch_conf(const Arguments& args) {
     Handle<Object> v8Obj = Object::New();
     for (int i = 0; i < nodes.count; ++i) {
         v8Obj->Set(String::New(nodes.nodes[i].key), String::New(nodes.nodes[i].value));
-        /*
-        if (strcmp(nodes.nodes[i].value, "") == 0) {
-            v8Obj->set(String::New(nodes.nodes[i].key), String::New(""));
-        }
-        */
     }
     destroy_qconf_batch_nodes(&nodes);
     return scope.Close(v8Obj);
@@ -194,10 +189,10 @@ Handle<Value> QConf_get_allhost(const Arguments& args) {
 
 void init(Handle<Object> target) {
     target->Set(String::NewSymbol("version"),
-            FunctionTemplate::New(QConfVersion)->GetFunction());
+            FunctionTemplate::New(QConf_version)->GetFunction());
 
     target->Set(String::NewSymbol("get_conf"),
-            FunctionTemplate::New(QConfGetConf)->GetFunction());
+            FunctionTemplate::New(QConf_get_conf)->GetFunction());
 
     target->Set(String::NewSymbol("get_batch_keys"),
             FunctionTemplate::New(QConf_get_batch_keys)->GetFunction());
