@@ -106,7 +106,7 @@ Handle<Value> QConf_get_batch_conf(const Arguments& args) {
     ret = qconf_get_batch_conf(path, &nodes, idc);
 
     if (ret != QCONF_OK) {
-        ThrowException(Exception::TypeError(String::New("Get children failed")));
+        ThrowException(Exception::TypeError(String::New("Get children and confs failed")));
         return scope.Close(Undefined());
     }
 
@@ -122,6 +122,37 @@ Handle<Value> QConf_get_batch_conf(const Arguments& args) {
     destroy_qconf_batch_nodes(&nodes);
     return scope.Close(v8Obj);
 }
+
+//get_host
+Handle<Value> QConf_get_host(const Arguments& args) {
+    HandleScope scope;
+
+    const char *path = NULL;
+    const char *idc = NULL;
+    char value[QCONF_HOST_BUF_MAX_LEN];
+    int ret;
+
+    if (args.Length() < 1) {
+        ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
+        return scope.Close(Undefined());
+    }
+
+    String::Utf8Value v8Path(args[0]);
+    path = *v8Path;
+
+    if (args.Length() >= 2) {
+        String::Utf8Value v8Idc(args[1]);
+        idc = *v8Idc;
+    }
+
+    ret = qconf_get_host(path, value, sizeof(value), idc);
+
+    if (ret != QCONF_OK) {
+        ThrowException(Exception::TypeError(String::New("Get host failed")));
+        return scope.Close(Undefined());
+    }
+    return scope.Close(String::New(value));
+}
 void init(Handle<Object> target) {
     target->Set(String::NewSymbol("version"),
             FunctionTemplate::New(QConfVersion)->GetFunction());
@@ -134,5 +165,8 @@ void init(Handle<Object> target) {
 
     target->Set(String::NewSymbol("get_batch_conf"),
             FunctionTemplate::New(QConf_get_batch_conf)->GetFunction());
+
+    target->Set(String::NewSymbol("get_host"),
+            FunctionTemplate::New(QConf_get_host)->GetFunction());
 }
 NODE_MODULE(qconf, init)
