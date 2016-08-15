@@ -6,3 +6,6 @@ console.log(conf);
 
 var children = require('./build/Release/qconf.node').get_batch_keys('/qconf/demo');
 console.log(children);
+
+var children_confs = require('./build/Release/qconf.node').get_batch_conf('/qconf/demo');
+console.log(children_confs);
